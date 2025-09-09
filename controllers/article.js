@@ -20,6 +20,20 @@ class ArticleController {
         }
         console.log('GET /articles - end')
     }
+
+    async getArticleBySlug (req, res) {
+        try {
+            console.log('Getting article by slug:', req.params.slug);
+            const article = await ArticleModel.findOne(req.params.slug);
+            if (!article) {
+                return res.status(404).json({error: 'Article not found'});
+            }
+            res.status(200).json({article: article});
+        } catch (error) {
+            console.error('Error fetching article by slug:', error);
+            res.status(500).json({error: 'Database error' });
+        }
+    }
 }
 
 module.exports = ArticleController

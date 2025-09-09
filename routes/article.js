@@ -10,4 +10,9 @@ router.get('/',(req, res) => {
     articleController.getAllArticles(req, res)
 })
 
+router.get('/:slug', (req, res) => {
+    console.log('Getting article by slug:', req.params.slug);
+    articleController.getArticleBySlug(req, res);
+})
+
 module.exports = router
