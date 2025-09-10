@@ -40,8 +40,11 @@ class BaseSQLModel {
   }
 
   async create(data) {
-    const query = `INSERT INTO ${this.tableName} SET ?`;
-    const result = await this.executeQuery(query, data);
+    const columns = Object.keys(data).join(', ');
+    const placeholders = Object.keys(data).map(() => '?').join(', ');
+    const values = Object.values(data);
+    const query = `INSERT INTO ${this.tableName} (${columns}) VALUES (${placeholders})`;
+    const result = await this.executeQuery(query, values);
     return result.insertId;
   }
 

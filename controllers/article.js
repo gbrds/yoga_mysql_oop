@@ -34,6 +34,67 @@ class ArticleController {
             res.status(500).json({error: 'Database error' });
         }
     }
+
+    async createArticle (req, res) {
+        try {
+            const newArticle = {
+                name: req.body.name,
+                slug: req.body.slug,
+                image: req.body.image,
+                body: req.body.body,
+                published: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                author_id: req.body.author_id
+            }
+            const articleId = await ArticleModel.create(newArticle);
+            res.status(201).json({
+                message: `created new article with id ${articleId}`,
+                article: {id: articleId, ...newArticle}
+            });
+        }  
+        catch (error) {
+            console.error('Error creating new article:', error);
+            res.status(500).json({error: 'Database error' });
+        }
+    }
+
+    async updateArticle (req, res) {
+        try {
+            const articleId = req.params.id;
+            const updatedArticle = {
+                name: req.body.name,
+                slug: req.body.slug,
+                image: req.body.image,
+                body: req.body.body,
+                author_id: req.body.author_id
+            }
+            const result = await ArticleModel.update(articleId, updatedArticle);
+            if (result.affectedRows === 0) {
+                return res.status(404).json({error: 'Article not found'});
+            }
+            res.status(200).json({
+                message: `updated article with id ${articleId}`,
+                article: {id: articleId, ...updatedArticle}
+            });
+        } catch (error) {
+            console.error('Error updating article:', error);
+            res.status(500).json({error: 'Database error' });
+        }
+    }
+
+    async deleteArticle (req, res) {
+        try {
+            const articleId = req.params.id;
+            const result = await ArticleModel.delete(articleId);
+            if (result.affectedRows === 0) {
+                return res.status(404).json({error: 'Article not found'});
+            }
+            res.status(200).json({message: `deleted article with id ${articleId}`});
+        } catch (error) {
+            console.error('Error deleting article:', error);
+            res.status(500).json({error: 'Database error' });
+        }
+    }
+
 }
 
 module.exports = ArticleController
