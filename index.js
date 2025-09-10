@@ -20,6 +20,9 @@ app.get('/', (req, res) => {
 const articleRoutes = require('./routes/article');
 app.use('/articles', articleRoutes);
 
+const authorRoutes = require('./routes/author');
+app.use('/authors', authorRoutes);
+
 // Start server
 app.listen(3025, () => {
     console.log('Server is running on port 3025');

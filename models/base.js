@@ -33,6 +33,12 @@ class BaseSQLModel {
     return results[0];
   }
 
+  async findMany(field, value) {
+    const query = `SELECT * FROM ${this.tableName} WHERE ${field} = ?`;
+    const results = await this.executeQuery(query, [value]);
+    return results;
+  }
+
   async create(data) {
     const query = `INSERT INTO ${this.tableName} SET ?`;
     const result = await this.executeQuery(query, data);
