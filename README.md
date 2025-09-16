@@ -52,6 +52,24 @@ A simple Express MVC application with user registration, login, article manageme
   email=example@example.com
   ```
 
+- **Register Admin**
+  `POST /users/register`
+  **Body (JSON):**
+  ```json
+  {
+    "username": "exampleuser",
+    "password": "examplepass",
+    "email": "example@example.com",
+    "overwrite": "true"
+  }
+  ```
+  **Body (x-www-form-urlencoded):**
+  ```
+  username=exampleuser
+  password=examplepass
+  email=example@example.com
+  overwrite=true
+  ```
 ### Authors
 - **Get All Authors**  
   `GET /authors`  
@@ -93,3 +111,10 @@ npm start
 - View all authors
 - Web interface for login and dashboard
 - JSON API endpoints for Postman
+- Role-based Access
+  - Every user has a role: ```user``` (Defailt) or ```admin```
+  - Role is stored in the ```users``` table and also in the session after login
+  - When registering through Postman, you can set ```"overwrite": true``` to create an admin user
+  - Admin users are redirected to ```/admin/dashboard```, while normal users go to ```/dashboard```
+  - Admin-only routes (like article delete/edit) check the user’s role before allowing access
+  - If a non-admin tries to access an admin route, they get 403 Access Denied
