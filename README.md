@@ -1,5 +1,3 @@
-# README.md
-
 # Express MVC App
 
 ## Description

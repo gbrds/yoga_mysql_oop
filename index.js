@@ -44,11 +44,30 @@ app.use('/users', userRoutes);
 app.get("/dashboard", (req, res) => {
     if (!req.session.user) {
         // If not logged in, redirect to login
-        return res.redirect("/login");
+        return res.redirect("/users/login");
     }
+
+    // Admin dashboard redirection
+    if (req.session.user.role === 'admin') {
+        return res.redirect('/admin/dashboard');
+    }
+
     // If logged in, render dashboard
     return res.render("dashboard", { user: req.session.user });
 });
+
+app.get("/admin/dashboard", (req, res) => {
+    if (!req.session.user) {
+        // If not logged in or not admin, redirect to login
+        return res.redirect("/users/login");
+    }
+    if (req.session.user.role !== 'admin') {
+        return res.status(403).send('Access denied. Admins only.');
+    }
+
+    // If logged in as admin, render admin dashboard
+    return res.render("admin_dashboard", { user: req.session.user });
+})
 
 // Start server
 app.listen(3025, () => {
