@@ -45,6 +45,37 @@ class UserController {
             });
         }
     }
+
+    async login(req, res) {
+        const user = await userModel.findOne('username', req.body.username);
+        if (!user) {
+            if (req.accepts('html')) {
+                return res.status(400).render('login', { error: 'Invalid username or password' });
+            } else {
+                return res.status(400).json({ error: 'Invalid username or password' });
+            }
+        }
+        const passwordMatch = await bcrypt.compare(req.body.password, user.password);
+        if (!passwordMatch) {
+            if (req.accepts('html')) {
+                return res.status(400).render('login', { error: 'Invalid username or password' });
+            } else {
+                return res.status(400).json({ error: 'Invalid username or password' });
+            }
+        }
+        req.session.user = {
+            username: user.username,
+            userId: user.id
+        }
+        if (req.accepts('html')) {
+            return res.redirect('/dashboard');
+        } else {
+            res.json({
+                message: 'Login successful',
+                user_session: req.session.user
+            });
+        }
+    }
 }
 
 module.exports = UserController;

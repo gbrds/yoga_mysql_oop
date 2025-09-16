@@ -3,11 +3,15 @@
 const express = require('express');
 const app = express();
 const session = require('express-session');
+const path = require('path');
 
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
 });
+
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -18,7 +22,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: { maxAge: 1000*60*60*24 }
-})); 
+}));
 
 // Root route for health check
 app.get('/', (req, res) => {
@@ -36,6 +40,15 @@ app.use('/authors', authorRoutes);
 // user routes
 const userRoutes = require('./routes/user');
 app.use('/users', userRoutes);
+
+app.get("/dashboard", (req, res) => {
+    if (!req.session.user) {
+        // If not logged in, redirect to login
+        return res.redirect("/login");
+    }
+    // If logged in, render dashboard
+    return res.render("dashboard", { user: req.session.user });
+});
 
 // Start server
 app.listen(3025, () => {
